@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyter-notebook
+  labels:
+    app: jupyter-notebook
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jupyter-notebook
+  template:
+    metadata:
+      labels:
+        app: jupyter-notebook
+    spec:
+      containers:
+        - name: minimal-notebook
+          image: jupyter/minimal-notebook:latest
+          ports:
+            - containerPort: 8888
+          command: ["start-notebook.sh"]
+          args: ["--NotebookApp.token=''"]
+          volumeMounts:
+            - name: work
+              mountPath: /home/jovyan/work
+      volumes:
+        - name: work
+          hostPath:
+            path: ./work # fix absolute path
